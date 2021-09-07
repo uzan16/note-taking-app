@@ -1,0 +1,31 @@
+version: '3.9'
+
+services:
+
+  db:
+    image: postgres
+    restart: always
+    expose:
+      - '5432'
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_DB=notes
+      - POSTGRES_USER=hiring
+      - POSTGRES_PASSWORD=hiring
+
+  api:
+    build: .
+    restart: always
+    expose:
+      - '8000'
+    ports:
+      - '8000:8000'
+    depends_on:
+      - db
+    command: sh -c "/wait && ./scripts/run.sh"
+    environment:
+      - WAIT_HOSTS=db:5432
+      - WAIT_HOSTS_TIMEOUT=300
+      - WAIT_SLEEP_INTERVAL=5
+      - WAIT_HOST_CONNECT_TIMEOUT=5
